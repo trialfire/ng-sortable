@@ -426,8 +426,8 @@
      * @param destItemScope - sortable destination item scope.
      * @returns {*|boolean} - true if drop is allowed for the drag item in drop target.
      */
-    $scope.accept = function (sourceItemHandleScope, destScope, destItemScope) {
-      return $scope.callbacks.accept(sourceItemHandleScope, destScope, destItemScope);
+    $scope.accept = function (sourceItemHandleScope, destScope, destItemScope, index) {
+      return $scope.callbacks.accept(sourceItemHandleScope, destScope, destItemScope, index);
     };
 
   }]);
@@ -921,7 +921,7 @@
                 return;
               }
 
-              if (targetScope.type === 'item' && targetScope.accept(scope, targetScope.sortableScope, targetScope)) {
+              if (targetScope.type === 'item') {
                 // decide where to insert placeholder based on target element and current placeholder if is present
                 targetElement = targetScope.element;
 
@@ -931,14 +931,24 @@
                   return;
                 }
 
+                var ix = targetScope.index();
                 var placeholderIndex = placeHolderIndex(targetScope.sortableScope.element);
-                if (placeholderIndex < 0) {
-                  insertBefore(targetElement, targetScope);
-                } else {
-                  if (placeholderIndex <= targetScope.index()) {
-                    insertAfter(targetElement, targetScope);
+                if (dragItemInfo.isSameParent() && !dragItemInfo.sourceInfo.sortableScope.cloning) {
+                  if (dragItemInfo.source.index() < ix) {
+                    ix = ix - 1;
                   } else {
+                    ix = ix - 1;
+                  }
+                }
+
+                if (placeholderIndex < 0 || placeholderIndex > ix) {
+                  if (targetScope.accept(scope, targetScope.sortableScope, targetScope, ix)) {
                     insertBefore(targetElement, targetScope);
+                  }
+                } else {
+                  ix++;
+                  if (targetScope.accept(scope, targetScope.sortableScope, targetScope, ix)) {
+                    insertAfter(targetElement, targetScope);
                   }
                 }
               }

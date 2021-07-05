@@ -67,8 +67,8 @@
      * @param destItemScope - sortable destination item scope.
      * @returns {*|boolean} - true if drop is allowed for the drag item in drop target.
      */
-    $scope.accept = function (sourceItemHandleScope, destScope, destItemScope) {
-      return $scope.callbacks.accept(sourceItemHandleScope, destScope, destItemScope);
+    $scope.accept = function (sourceItemHandleScope, destScope, destItemScope, index) {
+      return $scope.callbacks.accept(sourceItemHandleScope, destScope, destItemScope, index);
     };
 
   }]);
